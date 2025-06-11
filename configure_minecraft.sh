@@ -42,7 +42,7 @@ services:
 EOL
 
 # Start the Minecraft server with Docker Compose
-sudo docker-compose up -d
+sudo /usr/local/bin/docker-compose up -d
 
 # Print status of the Minecraft container
 sudo docker ps --filter "ancestor=itzg/minecraft-server:java21"
