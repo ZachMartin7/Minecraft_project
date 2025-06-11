@@ -16,12 +16,10 @@ sudo systemctl start docker
 # Add ec2-user to docker group (optional, for non-root usage)
 sudo usermod -aG docker ec2-user
 
-# Install Docker Compose (v2 as plugin)
-DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
-mkdir -p $DOCKER_CONFIG/cli-plugins
-curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
-  -o $DOCKER_CONFIG/cli-plugins/docker-compose
-chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+# Install Docker Compose (standalone binary)
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" \
+  -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 
 # Create a directory for Minecraft
 mkdir -p ~/minecraft
@@ -44,7 +42,7 @@ services:
 EOL
 
 # Start the Minecraft server with Docker Compose
-sudo docker compose up -d
+sudo docker-compose up -d
 
 # Print status of the Minecraft container
 sudo docker ps --filter "ancestor=itzg/minecraft-server:java21"
