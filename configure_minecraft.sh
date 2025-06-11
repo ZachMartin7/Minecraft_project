@@ -1,13 +1,27 @@
 #!/bin/bash
 
+set -e
+
 # Update package index
-sudo apt update
+sudo yum update -y
 
-# Install Docker and Docker Compose
-sudo apt install -y docker.io docker-compose
+# Install Docker
+sudo amazon-linux-extras install docker -y
+sudo yum install -y docker
 
-# Enable and start Docker
-sudo systemctl enable --now docker
+# Start and enable Docker
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Add ec2-user to docker group (optional, for non-root usage)
+sudo usermod -aG docker ec2-user
+
+# Install Docker Compose (v2 as plugin)
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+  -o $DOCKER_CONFIG/cli-plugins/docker-compose
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
 
 # Create a directory for Minecraft
 mkdir -p ~/minecraft
