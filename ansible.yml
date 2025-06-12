@@ -29,7 +29,7 @@
   tasks:
     - name: Copy Minecraft setup script
       copy:
-        src: ../scripts/configure_minecraft.sh
+        src: ../configure_minecraft.sh
         dest: /home/ec2-user/configure_minecraft.sh
         mode: '0755'
         owner: ec2-user
