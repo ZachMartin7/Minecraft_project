@@ -1,0 +1,41 @@
+- name: Setup and run Minecraft server with Docker Compose
+  hosts: minecraft
+  become: yes
+  gather_facts: no
+
+  pre_tasks:
+    - name: Install development tools and dependencies
+      raw: |
+        sudo yum groupinstall -y "Development Tools"
+        sudo yum install -y openssl-devel bzip2-devel libffi-devel zlib-devel wget
+
+    - name: Download and install Python 3.8 from source
+      raw: |
+        cd /usr/src
+        sudo wget https://www.python.org/ftp/python/3.8.18/Python-3.8.18.tgz
+        sudo tar xzf Python-3.8.18.tgz
+        cd Python-3.8.18
+        sudo ./configure --enable-optimizations
+        sudo make altinstall
+
+    - name: Symlink python3.8 to /usr/bin/python3.8
+      raw: sudo ln -sf /usr/local/bin/python3.8 /usr/bin/python3.8
+
+    - name: Gather facts after Python 3.8 is installed
+      setup:
+      vars:
+        ansible_python_interpreter: /usr/bin/python3.8
+
+  tasks:
+    - name: Copy Minecraft setup script
+      copy:
+        src: ../scripts/configure_minecraft.sh
+        dest: /home/ec2-user/configure_minecraft.sh
+        mode: '0755'
+        owner: ec2-user
+        group: ec2-user
+
+    - name: Run Minecraft setup script
+      command: /home/ec2-user/configure_minecraft.sh
+      args:
+        chdir: /home/ec2-user
